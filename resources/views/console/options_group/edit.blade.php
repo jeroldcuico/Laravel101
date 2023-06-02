@@ -36,9 +36,6 @@
                             <x-textarea id="description" name="description" label="Description" value="{{ $optionGroup->description }}" rows="5" cols="40"/></textarea>
                             <x-input-error class="mt-2" :messages="$errors->get('description')"/>
                             </div>  
-                            <div>
-                                {{$optionGroup}}
-                            </div>
                         </div>                        
                 
                     </form>
