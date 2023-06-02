@@ -23,7 +23,9 @@ class StoreOptionRequest extends FormRequest
     {
         return [
             'name'=>['string', 'max:255'],
-            'code'=>['string', 'max:255'],
+            'code'=>['string', 'max:255'],     
+            'group_id'=>['integer'],     
+            'description'=>['string', 'max:255'],     
         ];
     }
 }

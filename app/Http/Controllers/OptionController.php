@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Redirect;
 use App\Http\Requests\StoreOptionRequest;
 use App\Http\Requests\UpdateOptionRequest;
 use App\Models\Option;
+use App\Models\OptionGroup; 
 
 class OptionController extends Controller
 {
@@ -16,19 +17,14 @@ class OptionController extends Controller
      */
     public function index(Request $request)
     {
-        //! Search Area
-        $resultList = Option::query()->where('id','>',0);
+        $resultList = Option::withTrashed()->where('id','>',0);
         $filters = $request->all();
         if(array_key_exists('name', $filters)){
             $resultList->where('name', 'like','%'.$filters['name'].'%');
         }
-
-        $resultList->orderby('deleted_at', 'asc');
+        $resultList->orderby('deleted_at', 'desc');
         $resultList->orderby('name', 'asc');
-
-        //! Display List
-
-        $resultList = Option::paginate(config('constants.RECORD_PER_PAGE'));
+        $resultList = $resultList->paginate(config('constants.RECORD_PER_PAGE'));
         return view('console/options/index', compact('resultList'));
     }
 
@@ -38,9 +34,10 @@ class OptionController extends Controller
     public function create()
     {
         $option = new Option();
+        $optionsGroup = OptionGroup::all();
         $option->id = 0;
         $error = [];
-        return view('console/options/edit', compact('error','option'));
+        return view('console/options/edit', compact('error','option' , 'optionsGroup'));
     }
     
     /**
@@ -49,12 +46,8 @@ class OptionController extends Controller
     public function store(StoreOptionRequest $request) : RedirectResponse
     {
         $validatedData = $request->validate($request->rules());
-        $opt_group_ID = $request->input('status');
         $option = new Option();
-        $option->name = $validatedData['name'];
-        $option->code = $validatedData['code'];
-        $option->group_id = $opt_group_ID;
-        $option->save();
+        $option = $this-> saveRecordOption($option , $validatedData);
         return Redirect::route('options.edit', $option->id)->with('status','Option record has been created.');
     }
 
@@ -73,7 +66,8 @@ class OptionController extends Controller
     public function edit(Option $option)
     {
         $error = [];
-        return view('console/options/edit', compact('error','option'));
+        $optionsGroup = OptionGroup::all();
+        return view('console/options/edit', compact('error','option', 'optionsGroup'));
     }
 
     /**
@@ -82,10 +76,7 @@ class OptionController extends Controller
     public function update(UpdateOptionRequest $request, Option $option) : RedirectResponse
     {
         $validatedData = $request->validate($request->rules());
-        $option = new Option();
-        $option->name = $validatedData['name'];
-        $option->code = $validatedData['code'];
-        $option->save();
+        $option = $this-> saveRecordOption($option , $validatedData);
         return Redirect::route('options.edit', $option->id)->with('status','Option record has been updated.');
     }
 
@@ -95,6 +86,28 @@ class OptionController extends Controller
     public function destroy(Option $option) : RedirectResponse
     {
         $option->delete();
-        return Redirect::route('options.index')->with('status','Option has been deleted.');
+        return Redirect::route('options.index')->with('status','Option has been disabled.');
     }
+
+    protected function saveRecordOption(Option $option , array $data) : Option
+    {
+        $option->name = $data['name'];
+        $option->code = $data['code'];
+        $option->group_id = $data['group_id'];
+        $option->description = $data['description'];
+        $option->save();
+        return $option;
+    }
+
+    public function disable($id) : RedirectResponse
+    {
+        $option = Option::withTrashed()->find($id);
+        if($option){
+            $option->restore();
+            return Redirect::route('options.index')->with('status','Record has been re-enabled.');
+        }else{
+            return Redirect::route('options.index')->with('status','Record has not been enabled.');
+        }        
+    }
+    
 }

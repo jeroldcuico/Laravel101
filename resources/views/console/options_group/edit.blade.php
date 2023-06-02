@@ -1,9 +1,9 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Manage Options') }}
+            {{ __('Manage Option Groups') }}
         </h2>
-        <a href="/options">Back to List</a>
+        <a href="/optionsgroups">Back to List</a>
     </x-slot>
 
     @if(session('status') != '')
@@ -20,38 +20,25 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
                     
-                    <form id="record-data" method="post" action="{{ $option->id > 0 ? route('options.update', $option->id) : route('options.store') }}" class="mt-6 space-y-6">
+                    <form id="record-data" method="post" action="{{ $optionGroup->id > 0 ? route('optionsgroups.update', $optionGroup->id) : route('optionsgroups.store') }}" class="mt-6 space-y-6">
                         @csrf
-                        @if($option->id > 0)
+                        @if($optionGroup->id > 0)
                             @method('patch')
                         @endif
                         <div class="grid grid-cols-3 gap-4">
                             <div>
                                 <x-input-label for="name" :value="__('Name')"/>
-                                <x-text-input id="name" name="name" type="text" value="{{ $option->name }}" class="mt-1 block w-full" required/>
+                                <x-text-input id="name" name="name" type="text" value="{{ $optionGroup->name }}" class="mt-1 block w-full" required/>
                                 <x-input-error class="mt-2" :messages="$errors->get('name')"/>
                             </div>
                             <div>
-                                <x-input-label for="code" :value="__('Code')"/>
-                                <x-text-input id="code" name="code" type="text"  value="{{ $option->code }}" class="mt-1 block w-full" required/>
-                                <x-input-error class="mt-2" :messages="$errors->get('code')"/>
-                            </div> 
-                            <div>
-                                <x-input-label for="select_stat" :value="__('Option Groups')"/>
-                                <select x-ref="select" name="group_id" id="select_stat" class="mt-1 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block w-full" placeholder="Select a City">
-                                    @foreach($optionsGroup as $options)
-                                        <option value="{{ $options->id }}"
-                                        @if($options->id == $option->optionGroup->id) selected 
-                                        @endif
-                                        >{{ $options->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div> 
-                            <div>
                             <x-input-label for="description" :value="__('Description')"/>
-                            <x-textarea id="description" name="description" label="Description" value="{{ $option->description }}" rows="5" cols="40"/></textarea>
+                            <x-textarea id="description" name="description" label="Description" value="{{ $optionGroup->description }}" rows="5" cols="40"/></textarea>
                             <x-input-error class="mt-2" :messages="$errors->get('description')"/>
                             </div>  
+                            <div>
+                                {{$optionGroup}}
+                            </div>
                         </div>                        
                 
                     </form>
@@ -67,7 +54,7 @@
 </x-app-layout>
 <script>
     const doCancel = () =>{
-        window.location.href=`/options`;
+        window.location.href=`/optionsgroups`;
     }
 
     const validatePassword = () =>{

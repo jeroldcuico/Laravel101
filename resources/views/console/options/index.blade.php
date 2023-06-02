@@ -39,6 +39,7 @@
                                     <th class="th-header">Name</th>
                                     <th class="th-header">Description</th>
                                     <th class="th-header">Group Name</th>
+                                    <th class="th-header">Status</th>
                                     <th class="th-header">Action</th>
                                 </tr>
                             </thead>
@@ -49,20 +50,14 @@
                                     <td class="td-row">{{ $option->name }}</td>
                                     <td class="td-row">{{ $option->description }}</td>
                                     <td class="td-row">{{ $option->optionGroup->name }}</td>
+                                    <td class="td-row">{{ $option->StatusName }}</td>
                                     <td class="td-row">
                                         <div class="flex items-center gap-4"> 
                                             <x-primary-button onclick="gotoEdit({{ $option->id}})">{{ __('Edit')}}</x-primary-button>
-                                            <form method="POST" action="{{ route('options.destroy',$option->id) }}">
-                                                @csrf
-                                                @method('delete')
-                                                <x-danger-button>{{ __('Delete')}}</x-danger-button>
-                                            </form>
-                                            @if($option->isDeleted)
-                                            <form method="POST" action="{{ route('options.restore',$option->id) }}">
-                                                @csrf
-                                                <x-danger-button>{{ __('Restore')}}</x-danger-button>
-                                            </form>
-                                            @endif
+                                            <x-disable-delete :id="$option->id" :isDeleted="$option->isDeleted"
+                                                :action="$option->isDeleted ? route('options.disable',$option->id) : route('options.destroy',$option->id)" 
+                                                deleteLabel="Disable"
+                                                restoreLabel="Re-Enable"/>
                                         </div>
                                     </td>
                                 </tr>

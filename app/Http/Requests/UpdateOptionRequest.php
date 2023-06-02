@@ -11,7 +11,7 @@ class UpdateOptionRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,10 @@ class UpdateOptionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name'=>['string', 'max:255'],
+            'code'=>['string', 'max:255'],       
+            'group_id'=>['integer'],       
+            'description'=>['string', 'max:255'],     
         ];
     }
 }

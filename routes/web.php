@@ -39,6 +39,7 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::resource('/options', OptionController::class);
+    Route::post('/options/{id}/disable', [OptionController::class, 'disable'])->name('options.disable');
     Route::resource('/optionsgroups', OptionGroupController::class);
 });
 

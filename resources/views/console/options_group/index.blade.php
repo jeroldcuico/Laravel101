@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Manage Options') }}
+            {{ __('Manage optionGroup') }}
         </h2>
     </x-slot>
 
@@ -43,22 +43,22 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($resultList as $option)
+                                @foreach($resultList as $optionGroup)
                                 <tr>
-                                    <td class="td-row text-right">{{ $option->id }}</td>
-                                    <td class="td-row">{{ $option->name }}</td>
-                                    <td class="td-row">{{ $option->description }}</td>
-                                    <td class="td-row">{{ $option->name }}</td>
+                                    <td class="td-row text-right">{{ $optionGroup->id }}</td>
+                                    <td class="td-row">{{ $optionGroup->name }}</td>
+                                    <td class="td-row">{{ $optionGroup->description }}</td>
+                                    <td class="td-row">{{ $optionGroup->name }}</td>
                                     <td class="td-row">
                                         <div class="flex items-center gap-4"> 
-                                            <x-primary-button onclick="gotoEdit({{ $option->id}})">{{ __('Edit')}}</x-primary-button>
-                                            <form method="POST" action="{{ route('options.destroy',$option->id) }}">
+                                            <x-primary-button onclick="gotoEdit({{ $optionGroup->id}})">{{ __('Edit')}}</x-primary-button>
+                                            <form method="POST" action="{{ route('optionsgroups.destroy',$optionGroup->id) }}">
                                                 @csrf
                                                 @method('delete')
                                                 <x-danger-button>{{ __('Delete')}}</x-danger-button>
                                             </form>
-                                            @if($option->isDeleted)
-                                            <form method="POST" action="{{ route('options.restore',$option->id) }}">
+                                            @if($optionGroup->isDeleted)
+                                            <form method="POST" action="{{ route('optionsgroups.restore',$optionGroup->id) }}">
                                                 @csrf
                                                 <x-danger-button>{{ __('Restore')}}</x-danger-button>
                                             </form>
@@ -80,10 +80,10 @@
 </x-app-layout>
 <script>
     const gotoEdit = (id) => {
-        window.location.href=`/options/${id}/edit`;
+        window.location.href=`/optionsgroups/${id}/edit`;
     }
 
     const gotoAdd = () =>{
-        window.location.href=`/options/create`;
+        window.location.href=`/optionsgroups/create`;
     }
 </script>
